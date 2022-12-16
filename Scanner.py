@@ -6,12 +6,22 @@ tab = tabela()
 def getTable():
     return tab
 
-def erro(lin,col,palavra):
+def erro(lin,col,palavra,state,linE,colE):
     lexema = "".join(palavra)
     
     tk = token('ERRO',lexema,'NULO')
     tk.print()
-    print(f'ERRO, "{lexema}" inválido na linguagem, linha: {lin + 1}, coluna: {col}')
+
+    if state == 2:
+        print(f'ERRO, "{lexema}" espera-se um digito após o ".", linha: {lin + 1}, coluna: {col}')
+    elif state == 4:
+        print(f'ERRO, "{lexema}" espera-se um digito após o "E ou e", linha: {lin + 1}, coluna: {col}')
+    elif state == 5:
+        print(f'ERRO, "{lexema}" espera-se um digito após o "+ ou -", linha: {lin + 1}, coluna: {col}')
+    elif state == 9:
+        print(f'ERRO, "{lexema}" espera-se um fecha aspas na linha: {linE + 1}, coluna: {colE}')
+    else:
+        print(f'ERRO, "{lexema}" inválido na linguagem, linha: {lin + 1}, coluna: {col}')
     
     return [tk,lin,col]
 
@@ -68,6 +78,8 @@ def scanner(file,lin,col):
     state = 0
     letras = list("ABCDEFGHIJKLMNOPKRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
     digitos = list("0123456789")
+    linE = -1
+    colE = -1
     outros = list(",;:.!?\*+-/(){}[]<>='\"") 
 
     c = file[lin][col]
@@ -76,6 +88,9 @@ def scanner(file,lin,col):
         
         # estado 0
         if state == 0:
+            linE = lin
+            colE = col
+
             if c in digitos:
                 state = 1
                 palavra.append(c)
@@ -139,7 +154,7 @@ def scanner(file,lin,col):
                 state = 0
                 palavra.append(c)
                 col = col + 1
-                return erro(lin,col,palavra)
+                return erro(lin,col,palavra,state,linE,colE)
         
         # ESTADO 1
         elif state == 1:
@@ -164,7 +179,7 @@ def scanner(file,lin,col):
                 palavra.append(c)
                 
             else:
-                return erro(lin,col,palavra)
+                return erro(lin,col,palavra,state,linE,colE)
         
         # ESTADO 3
         elif state == 3:
@@ -187,7 +202,7 @@ def scanner(file,lin,col):
                 state = 5
                 palavra.append(c)
             else:
-                return erro(lin,col,palavra) 
+                return erro(lin,col,palavra,state,linE,colE) 
         
         # ESTADO 5
         elif state == 5:        
@@ -195,7 +210,7 @@ def scanner(file,lin,col):
                 state = 6
                 palavra.append(c)
             else:
-                return erro(lin,col,palavra)
+                return erro(lin,col,palavra,state,linE,colE)
             
         # ESTADO 6
         elif state == 6:       
@@ -220,7 +235,7 @@ def scanner(file,lin,col):
             elif c != '\n':
                 palavra.append(c)
             else:
-                return erro(lin,col,palavra) 
+                return erro(lin,col,palavra,state,linE,colE) 
             
         # ESTADO 10
         elif state == 10:
@@ -231,12 +246,13 @@ def scanner(file,lin,col):
             if c == '}' :
                 state = 0
             elif c == '$' and file[lin] == file[-1]:
-                print("Comentário não fechado")
+                print(f"Comentário da linha {linE + 1} coluna {colE} não fechado")
                 palavra.append('EOF')
                 return aceita(lin,col,8,palavra)
             elif c == '\n':
                 lin = lin + 1
                 col = -1
+                
                 
         
         # ESTADO 12
@@ -264,14 +280,6 @@ def scanner(file,lin,col):
                 palavra.append(c)
             else:
                 return aceita(lin,col,state,palavra)
-        
-        # ESTADO 15
-        elif state == 15:    
-            return aceita(lin,col,state,palavra)
-        
-        # ESTADO 16
-        elif state == 16:   
-            return aceita(lin,col,state,palavra)
         
         # ESTADO 17
         elif state == 17: 
