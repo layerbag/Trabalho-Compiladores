@@ -1,4 +1,4 @@
-ESTADOS,inicio,varinicio,varfim,PT_V,ID,VIR,inteiro,real,literal,leia,escreva,LIT,NUM,ATR,OPA,se,AB_P,FC_P,então,OPR,fimse,fim,EOF,P,V,LV,D,L,TIPO,A,ES,ARG,CMD,LD,OPRD,COND,CAB,EXP_R,CP
+ESTADOS,inicio,varinicio,varfim,PT_V,ID,VIR,inteiro,real,literal,leia,escreva,LIT,NUM,ATR,OPA,se,AB_P,FC_P,entao,OPR,fimse,fim,EOF,P,V,LV,D,L,TIPO,A,ES,ARG,CMD,LD,OPRD,COND,CAB,EXP_R,CP
 0,S2,,,,,,,,,,,,,,,,,,,,,,,1,,,,,,,,,,,,,,,
 1,,,,,,,,,,,,,,,,,,,,,,,ACC,,,,,,,,,,,,,,,,
 2,,S4,,,,,,,,,,,,,,,,,,,,,,,3,,,,,,,,,,,,,,
