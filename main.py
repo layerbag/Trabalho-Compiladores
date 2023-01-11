@@ -9,10 +9,5 @@ if __name__ == '__main__':
     arquivo = arquivo.readlines()
     arquivo[-1] = arquivo[-1] + '\n'
     arquivo.append('$')
-    lin = 0
-    col = 0
     
     analisador_sin.sintatico(arquivo)
-    
-
-            
