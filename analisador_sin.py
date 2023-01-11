@@ -18,9 +18,13 @@ def sintatico(arquivo):
         lin = res[1]
         col = res[2]
         
+        #print("---------------------------------------")
         a = res[0].getClass()
+        #print("TOKEN =", a)
+        #print(s)
         rule = ActionTable[a].values[s]
-        
+        #print("RULE -", rule)
+
         if rule[0] == 'S':
             s = int(rule[1:])
             pilha.append(s)
@@ -30,11 +34,24 @@ def sintatico(arquivo):
             Alfa = regras['A'].values[int(rule[1:]) - 1]
             
             BetaL = len(str.split(Beta,','))
-    
+
+            #print("ALfA =>", Alfa, "/ BETA =>", Beta, "/ TAM BETA =>", BetaL)
+            #print("PILHA =>", pilha)
+
             pilha = pilha[:len(pilha)-BetaL]
+
+            #print("PILHA =>", pilha)
+            
+            #print("S =>", ActionTable[Alfa].values[pilha[-1]])
+
             s = int(ActionTable[Alfa].values[pilha[-1]])
             pilha.append(s)
             print(f'{Alfa} -> {Beta}')
         elif rule == 'ACC':
             break
-        
+        else:
+            print("ERRO: esperava-se", str.split(rule[2:], '-'), "e foi Encontrado (", res[0].getlex(), ")", " - Linha:", lin+1, "/ Coluna:", col)
+
+            #MODO PANICO
+            if(a != 'PT_V'):
+                res = scanner(arquivo,lin,col)

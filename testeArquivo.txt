@@ -1,6 +1,14 @@
 inicio
     varinicio
         literal A;
-        inteiro B,D;
+        inteiro B, D, E;
+        real C ;
     varfim;
+    leia <- A;
+    escreva "Digite A:";
+    leia B;
+    B <- + 1; 
+    A <- A + 7;
+    se(B>2) entao leia A; fimse
+    A <- 7 - A + 1;
 fim
