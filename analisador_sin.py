@@ -15,11 +15,15 @@ regras = pd.read_csv('regras.csv')
 
 def sintatico(arquivo):
     # linha, coluna, estado
-    lin, col, s = 0
+    lin = 0
+    col = 0
+    s = 0
     pilha = [0]
     res = scanner(arquivo,lin,col)
-    
-    while lin <= len(arquivo):
+    cont = 0
+
+    print(len(arquivo))
+    while lin+1 < len(arquivo):
         
         lin = res[1]
         col = res[2]
@@ -27,6 +31,8 @@ def sintatico(arquivo):
         a = res[0].getClass()
         
         rule = ActionTable[a].values[s]
+
+        #print("** Normal => Token:", a, "/ Regra:", rule, "// Linha:", lin+1, "/ Coluna:", col)
 
         # caso comece com "S" é Shift
         if rule[0] == 'S':
@@ -57,8 +63,41 @@ def sintatico(arquivo):
         
         # caso seja erro
         else:
-            print("ERRO: esperava-se", str.split(rule[2:], '-'), "e foi Encontrado (", res[0].getlex(), ")", " - Linha:", lin+1, "/ Coluna:", col)
+            print("<<< ERRO SINTÁTICO >>>")
+            print("<< ERRO: esperava-se", str.split(rule[2:], '-'), "e foi Encontrado (", res[0].getlex(), ")", "- Linha:", lin+1, "/ Coluna:", col, ">>")
 
-            #MODO PANICO
-            if(a != 'PT_V'):
-                res = scanner(arquivo,lin,col)
+            res = scanner(arquivo,lin,col)
+            lin = res[1]
+            col = res[2]
+
+            while (a != 'PT_V' and a !='EOF'):  
+
+                a = res[0].getClass()
+                rule = ActionTable[a].values[s]
+
+                # caso comece com "S" é Shift
+                if rule[0] == 'S':
+                    s = int(rule[1:])
+                    pilha.append(s)
+                    res = scanner(arquivo,lin,col)
+
+                # caso seja Reduce Alfa -> Beta
+                elif rule[0] == 'R':
+                    Beta = regras['B'].values[int(rule[1:]) - 1]
+                    Alfa = regras['A'].values[int(rule[1:]) - 1]
+                    BetaL = len(str.split(Beta,','))
+                    pilha = pilha[:len(pilha)-BetaL]
+                    s = int(ActionTable[Alfa].values[pilha[-1]])
+                    pilha.append(s)
+
+                # caso seja aceitação
+                elif rule == 'ACC':
+                    break
+                
+                else:
+                    print("#<<< ERRO SINTÁTICO >>>")
+                    print("#<< ERRO: esperava-se", str.split(rule[2:], '-'), "e foi Encontrado (", res[0].getlex(), ")", "- Linha:", lin+1, "/ Coluna:", col, ">>")
+
+                    res = scanner(arquivo,lin,col)
+                    lin = res[1]
+                    col = res[2]
