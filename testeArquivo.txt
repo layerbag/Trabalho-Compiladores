@@ -1,14 +1,26 @@
 inicio
     varinicio
         literal A;
-        inteiro B, D, E;
-        real C ;
+        literal B;
+        inteiro C, D;
     varfim;
     leia <- A;
-    escreva "Digite A:";
     leia B;
-    B <- + 1; 
-    A <- A + 7;
-    se(B>2) entao leia A; fimse
-    A <- 7 - A + 1;
+    leia <- C + 12; 
+    B<-B+1;
+    B<-B+1+7;
+    A<-5;
+    escreva D;
+    escreva / A;
+    A <- B + 1 ;
+    se(B>2)
+    entao
+        se(B<=4)
+        entao
+            escreva "B esta entre 2 e 4";
+        fimse
+    fimse
+    A <- 7;;
+    B <- C;
+    A <- ;
 fim
