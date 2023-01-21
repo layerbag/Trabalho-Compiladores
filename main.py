@@ -2,6 +2,9 @@ from Scanner import scanner,getTable
 from tabela import tabela
 import analisador_sin
 
+def teste(x):
+    x = 5
+
 if __name__ == '__main__':
     
     arquivo = open("testeArquivo.txt",'r')
@@ -11,3 +14,4 @@ if __name__ == '__main__':
     arquivo.append('$')
     
     analisador_sin.sintatico(arquivo)
+
