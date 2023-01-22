@@ -19,15 +19,10 @@ def sintatico(arquivo):
     col = 0
     s = 0
     pilha = [0]
-    res = scanner(arquivo,lin,col)
-    cont = 0
+    res = scanner(arquivo,lin,col) 
 
-    print(len(arquivo))
     while lin+1 < len(arquivo):
-        
-        lin = res[1]
-        col = res[2]
-        
+            
         a = res[0].getClass()
         
         rule = ActionTable[a].values[s]
@@ -40,6 +35,8 @@ def sintatico(arquivo):
             s = int(rule[1:])
             pilha.append(s)
             
+            lin = res[1]
+            col = res[2]
             res = scanner(arquivo,lin,col)
 
         # caso seja Reduce Alfa -> Beta
@@ -63,17 +60,21 @@ def sintatico(arquivo):
         
         # caso seja erro
         else:
+            # esp = tokens esperados
             esp = str.split(rule[2:],sep='-')
             print("<<< ERRO SINTÁTICO >>>")
             print("<< ERRO: esperava-se", esp, '-', "e foi Encontrado (", res[0].getlex(), ")", "- Linha:", lin+1, "/ Coluna:", col, ">>")     
             
-            flag = PhraseLevel(esp,lin,col)
+            flag = PhraseLevel(esp,lin,col,a)
             
             if flag == -1:
+                lin = res[1]
+                col = res[2]
                 res = Panico(arquivo,lin,col,esp)
             else:
                 res = flag
 
+# FUNÇÃO PANICO
 def Panico(arquivo,lin,col,esp):
 
     res = scanner(arquivo,lin,col)
@@ -82,6 +83,7 @@ def Panico(arquivo,lin,col,esp):
     
     a = res[0].getClass()
   
+    # procura um token esperado
     while (a != 'PT_V' and a !='EOF'):  
         
         if a in esp:
@@ -93,19 +95,25 @@ def Panico(arquivo,lin,col,esp):
             a = res[0].getClass()
     
     return res
-        
-def PhraseLevel(esp,lin,col):
+
+
+# RECUPERAÇÃO LOCAL        
+def PhraseLevel(esp,lin,col,a):
     
     if 'PT_V' in esp:
-        tk = token('PT_V','PT_V','PT_V')
+        tk = token('PT_V',';','NULO')
         return [tk,lin,col]
     
     elif 'VIR' in esp:
-        tk = token('VIR','VIR','VIR')
+        tk = token('PT_V',',','NULO')
         return [tk,lin,col]
     
-    elif 'NUM' in esp:
-        tk = token('NUM','NUM','NUM')
+    elif 'inicio' in esp:
+        tk = token('inicio','inicio','inicio')
+        return [tk,lin,col]
+    
+    elif 'fim' in esp and a == 'EOF':
+        tk = token("fim","fim","fim")
         return [tk,lin,col]
     
     return -1
