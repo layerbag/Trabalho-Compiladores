@@ -27,8 +27,6 @@ def sintatico(arquivo):
         
         rule = ActionTable[a].values[s]
 
-        #print("** Normal => Token:", a, "/ Regra:", rule, "// Linha:", lin+1, "/ Coluna:", col)
-
         # caso comece com "S" é Shift
         if rule[0] == 'S':
             
