@@ -3,6 +3,7 @@
         literal B;
         inteiro C, D;
     varfim
+    @
     leia <- A;
     leia B;
     leia <- C + 12; 

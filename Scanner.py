@@ -23,7 +23,7 @@ def erro(lin,col,palavra,state,linE,colE):
     else:
         print(f'ERRO, "{lexema}" inválido na linguagem, linha: {lin + 1}, coluna: {col}')
     
-    return [tk,lin,col]
+    
 
 
 def aceita(lin,col,state,palavra):
@@ -153,8 +153,8 @@ def scanner(file,lin,col):
             else:
                 state = 0
                 palavra.append(c)
-                col = col + 1
-                return erro(lin,col,palavra,state,linE,colE)
+                erro(lin,col,palavra,state,linE,colE)
+                palavra.clear()
         
         # ESTADO 1
         elif state == 1:
@@ -179,7 +179,10 @@ def scanner(file,lin,col):
                 palavra.append(c)
                 
             else:
-                return erro(lin,col,palavra,state,linE,colE)
+                state = 0
+                palavra.append(c)
+                erro(lin,col,palavra,state,linE,colE)
+                palavra.clear()
         
         # ESTADO 3
         elif state == 3:
@@ -202,7 +205,10 @@ def scanner(file,lin,col):
                 state = 5
                 palavra.append(c)
             else:
-                return erro(lin,col,palavra,state,linE,colE) 
+                state = 0
+                palavra.append(c)
+                erro(lin,col,palavra,state,linE,colE)
+                palavra.clear()
         
         # ESTADO 5
         elif state == 5:        
@@ -210,7 +216,10 @@ def scanner(file,lin,col):
                 state = 6
                 palavra.append(c)
             else:
-                return erro(lin,col,palavra,state,linE,colE)
+                state = 0
+                palavra.append(c)
+                erro(lin,col,palavra,state,linE,colE)
+                palavra.clear()
             
         # ESTADO 6
         elif state == 6:       
@@ -235,7 +244,10 @@ def scanner(file,lin,col):
             elif c != '\n':
                 palavra.append(c)
             else:
-                return erro(lin,col,palavra,state,linE,colE) 
+                state = 0
+                palavra.append(c)
+                erro(lin,col,palavra,state,linE,colE)
+                palavra.clear()
             
         # ESTADO 10
         elif state == 10:
