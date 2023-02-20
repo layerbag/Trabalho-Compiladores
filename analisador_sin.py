@@ -1,5 +1,6 @@
 from token_class import token
-from Scanner import scanner
+from Scanner import scanner,tab
+import analisador_sem
 import pandas as pd
 
 #tabela de ações e transições como dataframe
@@ -19,10 +20,12 @@ def sintatico(arquivo):
     col = 0
     s = 0
     pilha = [0]
-    res = scanner(arquivo,lin,col) 
+    pilha_s = []
+    res = scanner(arquivo,lin,col)
 
     while lin+1 < len(arquivo):
-            
+        
+        pilha_s.append(res[0])    
         a = res[0].getClass()
         
         rule = ActionTable[a].values[s]
@@ -36,6 +39,7 @@ def sintatico(arquivo):
             lin = res[1]
             col = res[2]
             res = scanner(arquivo,lin,col)
+            
 
         # caso seja Reduce Alfa -> Beta
         elif rule[0] == 'R':
@@ -51,6 +55,9 @@ def sintatico(arquivo):
             pilha.append(s)
             
             print(f'{Alfa} -> {Beta}')
+            
+            pilha_s = analisador_sem.semantico(int(rule[1:]),pilha_s,tab)
+            
             
         # caso seja aceitação
         elif rule == 'ACC':
@@ -71,6 +78,8 @@ def sintatico(arquivo):
                 res = Panico(arquivo,lin,col,esp)
             else:
                 res = flag
+    
+    analisador_sem.geraArq()
 
 # FUNÇÃO PANICO
 def Panico(arquivo,lin,col,esp):
