@@ -20,14 +20,13 @@ def sintatico(arquivo):
     col = 0
     s = 0
     pilha = [0]
-    pilha_s = []
+    pilhaS = []
     res = scanner(arquivo,lin,col)
-
+    
     while lin+1 < len(arquivo):
-        
-        pilha_s.append(res[0])    
+            
         a = res[0].getClass()
-        
+
         rule = ActionTable[a].values[s]
 
         # caso comece com "S" é Shift
@@ -39,7 +38,9 @@ def sintatico(arquivo):
             lin = res[1]
             col = res[2]
             res = scanner(arquivo,lin,col)
-            
+
+            if res[0].getClass() in ['ID','LIT','NUM','OPA','OPR']:
+                pilhaS.append(res[0])
 
         # caso seja Reduce Alfa -> Beta
         elif rule[0] == 'R':
@@ -53,10 +54,16 @@ def sintatico(arquivo):
 
             s = int(ActionTable[Alfa].values[pilha[-1]])
             pilha.append(s)
-            
+            for x in pilhaS:
+                print(x.getlex(),end=',')
+            print('')
             print(f'{Alfa} -> {Beta}')
             
-            pilha_s = analisador_sem.semantico(int(rule[1:]),pilha_s,tab)
+            
+            pilhaS = analisador_sem.semantico(int(rule[1:]),pilhaS,tab)
+            for x in pilhaS:
+                print(x.getlex(),end=',')
+            print('')
             
             
         # caso seja aceitação

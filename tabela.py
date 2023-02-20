@@ -41,7 +41,7 @@ class tabela:
         
         for i,tk in enumerate(self.tabela):
             if tk.getlex() == lexema:
-                tk_aux = token(tk.getClass,lexema,tipo)
+                tk_aux = token(tk.getClass(),lexema,tipo)
                 self.tabela.pop(i)
                 self.tabela.insert(i,tk_aux)
                 break

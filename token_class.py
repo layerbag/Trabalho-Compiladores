@@ -11,5 +11,11 @@ class token:
     def getClass(self):
         return self.classe
     
+    def getTipo(self):
+        return self.tipo
+    
+    def setlex(self, lexema):
+        self.lexema = lexema
+    
     def print(self):
         print(f'Classe: {self.classe}, Lexema: {self.lexema}, Tipo: {self.tipo}')
