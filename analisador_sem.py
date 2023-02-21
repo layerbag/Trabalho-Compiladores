@@ -11,8 +11,8 @@ str3 = ""
 
 
 token_aux = token(None,None,None)
-oprd1 = token(None,None,None)
-oprd2 = token(None,None,None)
+oprd1 = None
+oprd2 = None
 ld = token(None,None,None)
 expr = token(None,None,None)
 cont = 1
@@ -88,6 +88,7 @@ def semantico(t,a:list,tab: tabela, lin, col, flag1):
         
         elif token_aux.getTipo() == 'literal':
             str3 = str3 + f'printf("%s",{token_aux.getlex()});\n'
+    
         
     if t == 15:
         token_aux.lexema = a[0].getlex().replace('"','')
@@ -95,74 +96,92 @@ def semantico(t,a:list,tab: tabela, lin, col, flag1):
         token_aux.classe = a[0].classe
         a.pop(0)
     
+    
     if t == 16:
-        token_aux.lexema = a[0].getlex()
+        token_aux.lexema = a[0].lexema
         token_aux.tipo = a[0].tipo
         token_aux.classe = a[0].classe
         a.pop(0)
+    
         
     if t == 17:
         tk = tab.isInTable(a[0].getlex())
         if tk.tipo == 'NULO':
-            pass
+            print(f"\nERRO SEMANTICO - VARIÁVEL '{tk.lexema}' NÃO DECLARADA LINA {lin} COLUNA {col}\n")
         
         else:
             token_aux = tk
-            
-            print(token_aux.getClass(),token_aux.getlex(),token_aux.getTipo())
+
         
         a.pop(0)
     
+    
     if t == 19:
         tk = tab.isInTable(a[0].getlex())
+        
         if tk == False:
             print(f'\nERRO SEMANTICO - VARIAVEL NÃO DECLARADA LINHA {lin + 1} COLUNA {col}\n')
             flag = False
             a.pop(0)
             return a
         
-        if tk.tipo != 'NULO':
-            print(tk.tipo,ld.tipo)
+        elif tk.tipo == ld.tipo:
+            
             if tk.tipo == ld.tipo:
                 str3 = str3 + f"{tk.lexema} = {ld.lexema};\n"
+        
+        else:
+            print(f"\nERRO SEMANTICO: OPERANDOS {tk.lexema} e {ld.lexema} COM TIPOS INCOMPATIVEIS LINHA {lin + 1} COLUNA {col}\n")
+            flag = False
+            
         a.pop(0)
     
+    
     if t == 20:
-        print(oprd1.tipo,oprd2.tipo)
-        if oprd1.getTipo() == oprd2.getTipo() and oprd1.getTipo() != 'literal':
-            ld = token(None,f'T{cont}',oprd1.tipo)
+        if oprd1.tipo in ['inteiro','real'] and oprd2.tipo in ['inteiro', 'real'] and oprd1.tipo != 'literal':
+            # ld token com lexema Tx e tipo do operando 1
+            ld = token(None, f'T{cont}', oprd1.tipo)
+            
+            # linha Tx = oprd1 opa Oprd2
             str3 = str3 + f"T{cont} = {oprd1.getlex()} {a[1].getlex()} {oprd2.getlex()};\n"
             
+            # verifica se declara a temporária como int ou double
             if oprd1.tipo == 'inteiro':
                 declaraTemp('inteiro')
             else:
                 declaraTemp('double')
         
         else:
-            print(f"\nERRO SEMANTICO: OPERANDOS COM TIPOS INCOMPATIVEIS LINHA {lin + 1} COLUNA {col}\n")
+            print(f"\nERRO SEMANTICO: OPERANDOS '{oprd1.lexema}' e '{oprd2.lexema}' COM TIPOS INCOMPATIVEIS LINHA {lin + 1} COLUNA {col}\n")
             flag = False
         
-        oprd1 = token(None,None,None)
-        oprd2 = token(None,None,None)
+        oprd1 = None
+        oprd2 = None
             
         cont += 1
-        return a[:1]
+        a.pop(1)
+    
         
     if t == 21:
         ld = oprd1
-        oprd1 = token(None,None,None)
+        oprd1 = None
+    
     
     if t == 22:
+        # verifica se é uma operação relacional, aritimetica ou outra
         if a[1].classe == 'OPR':
             temp = a[0]
             a.pop(0)
+            
         elif a[1].classe == 'OPA':
             temp = a[2]
             a.pop(2)
+            
         else:
             temp = a[1]
             a.pop(1)
-            
+        
+        # pega o token na tabela de simbolos    
         tk = tab.isInTable(temp.getlex())
         if tk == False:
             print(f"\nERRO SEMANTICO - VARIAVEL NÃO DECLARADA LINHA {lin + 1} COLUNA {col}\n")
@@ -172,11 +191,13 @@ def semantico(t,a:list,tab: tabela, lin, col, flag1):
         if tk.tipo == 'NULO':
             print(f"\nERRO SEMANTICO - VARIAVEL '{tk.lexema}' NÃO DECLARADA LINHA {lin + 1} COLUNA {col}\n")
             flag = False
+            return a
         
         else:
-            print(tk.tipo)
-            if oprd1.getlex() == None:
+            # se o oprd1 estiver vazio, salva no oprd2
+            if oprd1 == None:
                 oprd1 = tk
+                
             else:
                 oprd2 = tk
 
@@ -184,27 +205,39 @@ def semantico(t,a:list,tab: tabela, lin, col, flag1):
     if t == 23:
         if a[1].classe == 'OPR':
             temp = a[0]
+            a.pop(0)
+            
         elif a[1].classe == 'OPA':
             temp = a[2]
             a.pop(2)
-        else:
+            
+        else:  
             temp = a[1]
             a.pop(1)
+        
             
-        if oprd1.getlex() == None:
+        if oprd1 == None:
             oprd1 = temp
         else:
             oprd2 = temp
+            
+    
       
     if t == 25:
         str3 += "}\n"
     
+    
     if t == 26:
         str3 += f"if({expr.lexema})\n{{\n "
     
+    
     if t == 27:
-        if oprd1.tipo in ['inteiro','double'] and oprd2.tipo in ['inteiro', 'double']:
+        # verifica se a operação é entre int-int, double-double, double-int
+        if oprd1.tipo in ['inteiro','real'] and oprd2.tipo in ['inteiro', 'real']:
+            #lexema da expr recebe Tx
             expr.lexema = f"T{cont}"
+            
+            #linha Tx = oprd1 opr oprd2
             str3 += f"T{cont} = {oprd1.getlex()} {a[0].getlex()} {oprd2.getlex()};\n"
             
             if oprd1.tipo == 'inteiro':
@@ -216,12 +249,14 @@ def semantico(t,a:list,tab: tabela, lin, col, flag1):
             print(f"\nERRO SEMANTICO - OPERANDOS COM TIPOS INCOMPATIVEIS LINHA {lin + 1} COLUNA {col}\n")
             flag = False
         
-        oprd1 = token(None,None,None)
-        oprd2 = token(None,None,None)
+        oprd1 = None
+        oprd2 = None
         
         cont += 1
         a.pop(0)
     
+    
+    # tratamentos finais do código
     if t == 32:
         str3 += f'return 0;\n}}'
         str2 += '/*------------------------------*/\n'

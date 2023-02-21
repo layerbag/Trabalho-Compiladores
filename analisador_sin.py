@@ -55,17 +55,22 @@ def sintatico(arquivo):
 
             s = int(ActionTable[Alfa].values[pilha[-1]])
             pilha.append(s)
+            
+            # printar pilha semantica ----------------------------
             # for x in pilhaS:
             #     print(x.getlex(),end=',')
             # print('')
+            #-------------------------------------------------
+            
             print(f'{Alfa} -> {Beta}')
             
-            
             pilhaS = analisador_sem.semantico(int(rule[1:]),pilhaS,tab, lin, col, flagS)
+            
+            # printar pilha semantica --------------------
             # for x in pilhaS:
             #     print(x.getlex(),end=',')
             # print('')
-            
+            #------------------------------------------
             
         # caso seja aceitação
         elif rule == 'ACC':
