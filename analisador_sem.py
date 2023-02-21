@@ -1,10 +1,14 @@
-import os
 from tabela import tabela
 from token_class import token
+
+# str1 -> cabeçalho
+# str2 -> variáveis temporárias
+# str3 -> corpo do código
 
 str1 = "#include <stdio.h>\ntypedef char literal[256];\nint main(){\n"
 str2 = "/*-------Variaveis temporarias---------*/\n"
 str3 = ""
+
 
 token_aux = token(None,None,None)
 oprd1 = token(None,None,None)
@@ -12,8 +16,9 @@ oprd2 = token(None,None,None)
 ld = token(None,None,None)
 expr = token(None,None,None)
 cont = 1
+flag = True
 
-def semantico(t,a:list,tab: tabela):
+def semantico(t,a:list,tab: tabela, lin, col, flag1):
     global str1
     global str2
     global str3
@@ -22,6 +27,10 @@ def semantico(t,a:list,tab: tabela):
     global oprd2
     global ld
     global cont
+    global flag
+    
+    if flag1 == False:
+        flag = flag1
     
     if t == 6:
         str3 = str3 + ";\n"
@@ -50,8 +59,13 @@ def semantico(t,a:list,tab: tabela):
 
     if t == 13:
         tk = tab.isInTable(a[0].getlex())
+        if tk == False:
+            print(f"\nERRO SEMANTICO - VARIAVEL NÃO DECLARADA LINHA {lin + 1} COLUNA {col}\n")
+            flag = False
+            return a[1:]
         if tk.tipo == 'NULO':
-            pass
+            print(F"\nERRO SEMANTICO - VARIAVEL '{tk.lexema}' NÃO DECLARADA LINHA {lin + 1} COLUNA {col}\n")
+            flag = False
         
         elif tk.tipo == 'inteiro':
             str3 = str3 + f'scanf("%d", &{a[0].getlex()});\n'
@@ -101,6 +115,12 @@ def semantico(t,a:list,tab: tabela):
     
     if t == 19:
         tk = tab.isInTable(a[0].getlex())
+        if tk == False:
+            print(f'\nERRO SEMANTICO - VARIAVEL NÃO DECLARADA LINHA {lin + 1} COLUNA {col}\n')
+            flag = False
+            a.pop(0)
+            return a
+        
         if tk.tipo != 'NULO':
             print(tk.tipo,ld.tipo)
             if tk.tipo == ld.tipo:
@@ -117,10 +137,14 @@ def semantico(t,a:list,tab: tabela):
                 declaraTemp('inteiro')
             else:
                 declaraTemp('double')
-            
-            oprd1 = token(None,None,None)
-            oprd2 = token(None,None,None)
         
+        else:
+            print(f"\nERRO SEMANTICO: OPERANDOS COM TIPOS INCOMPATIVEIS LINHA {lin + 1} COLUNA {col}\n")
+            flag = False
+        
+        oprd1 = token(None,None,None)
+        oprd2 = token(None,None,None)
+            
         cont += 1
         return a[:1]
         
@@ -140,10 +164,17 @@ def semantico(t,a:list,tab: tabela):
             a.pop(1)
             
         tk = tab.isInTable(temp.getlex())
+        if tk == False:
+            print(f"\nERRO SEMANTICO - VARIAVEL NÃO DECLARADA LINHA {lin + 1} COLUNA {col}\n")
+            flag = False
+            return a
+        
         if tk.tipo == 'NULO':
-            pass
+            print(f"\nERRO SEMANTICO - VARIAVEL '{tk.lexema}' NÃO DECLARADA LINHA {lin + 1} COLUNA {col}\n")
+            flag = False
         
         else:
+            print(tk.tipo)
             if oprd1.getlex() == None:
                 oprd1 = tk
             else:
@@ -181,8 +212,12 @@ def semantico(t,a:list,tab: tabela):
             else:
                 declaraTemp('double')
             
-            oprd1 = token(None,None,None)
-            oprd2 = token(None,None,None)
+        else:
+            print(f"\nERRO SEMANTICO - OPERANDOS COM TIPOS INCOMPATIVEIS LINHA {lin + 1} COLUNA {col}\n")
+            flag = False
+        
+        oprd1 = token(None,None,None)
+        oprd2 = token(None,None,None)
         
         cont += 1
         a.pop(0)
@@ -194,8 +229,10 @@ def semantico(t,a:list,tab: tabela):
     return a
 
 def geraArq():
-    arquivo = open("teste.c",'w')
-    arquivo.write(str1 + str2 + str3)
+    if flag:
+        arquivo = open("teste.c",'w')
+        arquivo.write(str1 + str2 + str3)
+    
     
 def declaraTemp(tipo):
     global str2

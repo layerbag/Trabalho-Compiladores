@@ -21,6 +21,7 @@ def sintatico(arquivo):
     s = 0
     pilha = [0]
     pilhaS = []
+    flagS = True
     res = scanner(arquivo,lin,col)
     
     while lin+1 < len(arquivo):
@@ -54,16 +55,16 @@ def sintatico(arquivo):
 
             s = int(ActionTable[Alfa].values[pilha[-1]])
             pilha.append(s)
-            for x in pilhaS:
-                print(x.getlex(),end=',')
-            print('')
+            # for x in pilhaS:
+            #     print(x.getlex(),end=',')
+            # print('')
             print(f'{Alfa} -> {Beta}')
             
             
-            pilhaS = analisador_sem.semantico(int(rule[1:]),pilhaS,tab)
-            for x in pilhaS:
-                print(x.getlex(),end=',')
-            print('')
+            pilhaS = analisador_sem.semantico(int(rule[1:]),pilhaS,tab, lin, col, flagS)
+            # for x in pilhaS:
+            #     print(x.getlex(),end=',')
+            # print('')
             
             
         # caso seja aceitação
@@ -72,6 +73,7 @@ def sintatico(arquivo):
         
         # caso seja erro
         else:
+            flagS = False
             # esp = tokens esperados
             esp = str.split(rule[2:],sep='-')
             print("<<< ERRO SINTÁTICO >>>")
