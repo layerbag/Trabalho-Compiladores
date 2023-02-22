@@ -57,9 +57,9 @@ def sintatico(arquivo):
             pilha.append(s)
             
             # printar pilha semantica ----------------------------
-            # for x in pilhaS:
-            #     print(x.getlex(),end=',')
-            # print('')
+            for x in pilhaS:
+                print(x.getlex(),end=',')
+            print('')
             #-------------------------------------------------
             
             print(f'{Alfa} -> {Beta}')
@@ -67,9 +67,9 @@ def sintatico(arquivo):
             pilhaS = analisador_sem.semantico(int(rule[1:]),pilhaS,tab, lin, col, flagS)
             
             # printar pilha semantica --------------------
-            # for x in pilhaS:
-            #     print(x.getlex(),end=',')
-            # print('')
+            for x in pilhaS:
+                print(x.getlex(),end=',')
+            print('')
             #------------------------------------------
             
         # caso seja aceitação

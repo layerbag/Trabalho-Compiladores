@@ -1,29 +1,26 @@
 inicio
-varinicio
-literal A;
-inteiro B,D;
-real C ;
-varfim;
-escreva "Digite B";
-leia B;
-escreva "Digite A:";
-leia A;
-se(B>2)
-entao
-se(B<=4)
-entao
-escreva "B esta entre 2 e 4";
-fimse
-fimse
-B<-B+1;
-B<-B+2;
-B<-B+3;
-D<-B;
-C<-5.0;
- escreva "\nB=\n";
-escreva D;
-escreva "\n";
-escreva C;
-escreva "\n";
-escreva A;
+    varinicio
+        inteiro idade;
+        inteiro a,b;
+        real peso;
+        real dobro;
+        literal nome;
+    varfim;
+
+    escreva "Digite a sua idade: ";
+    leia idade;
+    escreva "Digite seu nome: ";
+    leia nome;
+    escreva "Digite seu peso: ";
+    leia peso;
+
+    se(idade >= 18)
+    entao
+        escreva nome;
+        escreva " é maior de idade!";
+    fimse
+
+    dobro <- peso * 2;
+    escreva "o dobro do peso é:";
+    escreva dobro;
 fim

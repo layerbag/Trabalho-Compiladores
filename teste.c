@@ -3,40 +3,28 @@ typedef char literal[256];
 int main(){
 /*-------Variaveis temporarias---------*/
 int T1;
-int T2;
-double T3;
-int T4;
-int T5;
+double T2;
 /*------------------------------*/
-literal A;
-int B,D;
-double C;
-printf("Digite B");
-scanf("%d", &B);
-printf("Digite A:");
-scanf("%s", &A);
-T1 = B > 2;
+int idade;
+int a,b;
+double peso;
+double dobro;
+literal nome;
+printf("Digite a sua idade: \n");
+scanf("%d", &idade);
+printf("Digite seu nome: \n");
+scanf("%s", &nome);
+printf("Digite seu peso: \n");
+scanf("%lf", &peso);
+T1 = idade >= 18;
 if(T1)
 {
- T2 = B <= 4;
-if(T2)
-{
- printf("B esta entre 2 e 4");
+ printf("%s\n",nome);
+printf(" é maior de idade!\n");
 }
-}
-T3 = C + 1;
-C = T3;
-T4 = B + 2;
-B = T4;
-T5 = B + 3;
-B = T5;
-D = B;
-C = 5.0;
-printf("\nB=\n");
-printf("%d",D);
-printf("\n");
-printf("%lf",C);
-printf("\n");
-printf("%s",A);
+T2 = peso * 2;
+dobro = T2;
+printf("o dobro do peso é:\n");
+printf("%lf\n",dobro);
 return 0;
 }

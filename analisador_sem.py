@@ -8,6 +8,7 @@ from token_class import token
 str1 = "#include <stdio.h>\ntypedef char literal[256];\nint main(){\n"
 str2 = "/*-------Variaveis temporarias---------*/\n"
 str3 = ""
+straux = ""
 
 
 token_aux = token(None,None,None)
@@ -36,26 +37,43 @@ def semantico(t,a:list,tab: tabela, lin, col, flag1):
         str3 = str3 + ";\n"
     
     if t == 7:
-        tab.update(a[0].getlex(),token_aux.tipo)
-        str3 = str3 + f",{a[0].getlex()}"
+        tk = tab.isInTable(a[0].lexema)
+        
+        if tk == False:
+            return a[1:]
+        
+        if tk.tipo == 'NULO':
+            tab.update(a[0].getlex(),token_aux.tipo)
+            str3 += f",{a[0].getlex()}"
         return a[1:]
         
     if t == 8:
-        tab.update(a[0].getlex(),token_aux.tipo)
-        str3 = str3 + f"{a[0].getlex()}"
+        tk = tab.isInTable(a[0].lexema)
+        
+        if tk == False:
+            return a[1:]
+        
+        if tk.tipo == 'NULO':
+            tab.update(a[0].getlex(),token_aux.tipo)
+            str3 += f"{a[0].getlex()}"
+            
+        else:
+            print(f"\nVARIAVEL {tk.lexema} JA DECLARADA ANTERIORMENTE\n")
+            flag = False
+                
         return a[1:]
     
     if t == 9:
         token_aux.tipo = "inteiro"
-        str3 = str3 + "int "
+        str3 += "int "
     
     if t == 10:
         token_aux.tipo = "real"
-        str3 = str3 + "double "
+        str3 += "double "
         
     if t == 11:
         token_aux.tipo = "literal"
-        str3 = str3 + "literal "
+        str3 += "literal "
 
     if t == 13:
         tk = tab.isInTable(a[0].getlex())
@@ -78,16 +96,16 @@ def semantico(t,a:list,tab: tabela, lin, col, flag1):
 
     if t == 14:
         if token_aux.getClass() != 'ID':
-            str3 = str3 + f'printf("{token_aux.getlex()}");\n'
+            str3 = str3 + f'printf("{token_aux.getlex()}\\n");\n'
         
         elif token_aux.getTipo() == 'inteiro':
-            str3 = str3 + f'printf("%d",{token_aux.getlex()});\n'
+            str3 = str3 + f'printf("%d\\n",{token_aux.getlex()});\n'
 
         elif token_aux.getTipo() == 'real':
-            str3 = str3 + f'printf("%lf",{token_aux.getlex()});\n'
+            str3 = str3 + f'printf("%lf\\n",{token_aux.getlex()});\n'
         
         elif token_aux.getTipo() == 'literal':
-            str3 = str3 + f'printf("%s",{token_aux.getlex()});\n'
+            str3 = str3 + f'printf("%s\\n",{token_aux.getlex()});\n'
     
         
     if t == 15:
@@ -106,8 +124,11 @@ def semantico(t,a:list,tab: tabela, lin, col, flag1):
         
     if t == 17:
         tk = tab.isInTable(a[0].getlex())
-        if tk.tipo == 'NULO':
-            print(f"\nERRO SEMANTICO - VARIÁVEL '{tk.lexema}' NÃO DECLARADA LINA {lin} COLUNA {col}\n")
+        
+        if tk == False:
+            print(f"\nERRO SEMANTICO - VARIAVEL {a[0].lexema} NÃO DECLARADA LINHA {lin} COLUNA {col}\n")
+        elif tk.tipo == 'NULO':
+            print(f"\nERRO SEMANTICO - VARIÁVEL '{tk.lexema}' NÃO DECLARADA LINHA {lin} COLUNA {col}\n")
         
         else:
             token_aux = tk
@@ -139,17 +160,19 @@ def semantico(t,a:list,tab: tabela, lin, col, flag1):
     
     if t == 20:
         if oprd1.tipo in ['inteiro','real'] and oprd2.tipo in ['inteiro', 'real'] and oprd1.tipo != 'literal':
-            # ld token com lexema Tx e tipo do operando 1
-            ld = token(None, f'T{cont}', oprd1.tipo)
             
+            opa = a[1].lexema
             # linha Tx = oprd1 opa Oprd2
-            str3 = str3 + f"T{cont} = {oprd1.getlex()} {a[1].getlex()} {oprd2.getlex()};\n"
+            str3 = str3 + f"T{cont} = {oprd1.getlex()} {opa} {oprd2.getlex()};\n"
             
             # verifica se declara a temporária como int ou double
-            if oprd1.tipo == 'inteiro':
-                declaraTemp('inteiro')
-            else:
+            if opa == '/' or oprd1.tipo == 'real':
                 declaraTemp('double')
+                ld = token(None, f'T{cont}', 'real')
+            else: 
+                declaraTemp('inteiro')
+                ld = token(None, f'T{cont}', 'inteiro')
+        
         
         else:
             print(f"\nERRO SEMANTICO: OPERANDOS '{oprd1.lexema}' e '{oprd2.lexema}' COM TIPOS INCOMPATIVEIS LINHA {lin + 1} COLUNA {col}\n")
