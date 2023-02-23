@@ -96,16 +96,16 @@ def semantico(t,a:list,tab: tabela, lin, col, flag1):
 
     if t == 14:
         if token_aux.getClass() != 'ID':
-            str3 = str3 + f'printf("{token_aux.getlex()}\\n");\n'
+            str3 = str3 + f'printf("{token_aux.getlex()}");\n'
         
         elif token_aux.getTipo() == 'inteiro':
-            str3 = str3 + f'printf("%d\\n",{token_aux.getlex()});\n'
+            str3 = str3 + f'printf("%d",{token_aux.getlex()});\n'
 
         elif token_aux.getTipo() == 'real':
-            str3 = str3 + f'printf("%lf\\n",{token_aux.getlex()});\n'
+            str3 = str3 + f'printf("%lf",{token_aux.getlex()});\n'
         
         elif token_aux.getTipo() == 'literal':
-            str3 = str3 + f'printf("%s\\n",{token_aux.getlex()});\n'
+            str3 = str3 + f'printf("%s",{token_aux.getlex()});\n'
     
         
     if t == 15:
